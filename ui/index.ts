@@ -8,6 +8,7 @@ import "./styles.css";
 
 import { classNameFactory } from "@api/Styles";
 import { proxyLazy } from "@utils/lazy";
+import { findByPropsLazy } from "@webpack";
 import { Forms } from "@webpack/common";
 import { ComponentType, HTMLAttributes } from "react";
 
@@ -30,10 +31,16 @@ type Spinner = ComponentType<Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
     Type: typeof SpinnerTypes;
 };
 
-export const cl = classNameFactory("qrlogin-");
-
 // https://github.com/Kyuuhachi/VencordPlugins/blob/main/MessageLinkTooltip/index.tsx#L11-L33
 export const { Spinner } = proxyLazy(() => Forms as any as {
     Spinner: Spinner,
     SpinnerTypes: typeof SpinnerTypes;
 });
+
+export const { QrCodeCameraIcon } = findByPropsLazy("QrCodeCameraIcon") as {
+    QrCodeCameraIcon: ComponentType<{
+        size: number;
+    }>;
+};
+
+export const cl = classNameFactory("qrlogin-");

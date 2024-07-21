@@ -103,7 +103,7 @@ const handleProcessImage = (
     reader.readAsDataURL(file);
 };
 
-function QRModal(props: ModalProps) {
+function QrModal(props: ModalProps) {
     const [state, setState] = useState(LoginStateType.Idle);
     const inputRef = useRef<HTMLInputElement>(null);
     const error = useRef<string | null>(null);
@@ -346,6 +346,6 @@ function QRModal(props: ModalProps) {
     );
 }
 
-export default function openQRModal() {
-    return openModal(props => <QRModal {...props} />);
+export default function openQrModal() {
+    return openModal(props => <QrModal {...props} />);
 }

@@ -78,3 +78,12 @@
     align-items: center;
     gap: 8px;
 }
+
+.qrlogin-menuitem-focused {
+    background-color: var(--profile-body-background-hover) !important;
+    color: var(--interactive-hover) !important;
+}
+
+.qrlogin-menuitem-focused .qrlogin-submenu-icon {
+    color: var(--interactive-hover) !important;
+}
