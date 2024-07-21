@@ -23,7 +23,7 @@ export let jsQR: (
     version: number;
     location: object;
 };
-import("./jsQR.min.js").then(x => (jsQR = x.default));
+import("./jsQR.js").then(x => (jsQR = x.default));
 
 export default definePlugin({
     name: "LoginWithQR",
