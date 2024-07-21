@@ -28,7 +28,7 @@ import("./jsQR.min.js").then(x => (jsQR = x.default));
 export default definePlugin({
     name: "LoginWithQR",
     description:
-        "Allows you to login by scanning a QR code like the mobile app",
+        "Allows you to login to another device by scanning a login QR code, just like on mobile!",
     // replace with EquicordDevs.nexpid when merged to Equicord
     authors: [
         {

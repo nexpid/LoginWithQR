@@ -1,6 +1,6 @@
 # Login with QR
 
-Allows you to login by scanning a Discord login QR code on desktop!
+Allows you to login to another device by scanning a login QR code, just like on mobile!
 
 | ![Scan QR button in the My Account tab](./previews/myaccount.png) | ![Scan QR menu item in the simplified user popout](./previews/menuitem.png) | ![Authorization using webcamera](./previews/auth.gif) |
 | ----------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
