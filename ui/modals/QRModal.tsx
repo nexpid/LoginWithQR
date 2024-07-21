@@ -22,8 +22,8 @@ import {
     useRef,
     useState,
 } from "@webpack/common";
-import { jsQR } from "userplugins/LoginWithQR";
 
+import { jsQR } from "../../";
 import { cl, Spinner, SpinnerTypes } from "..";
 import openVerifyModal from "./VerifyModal";
 
