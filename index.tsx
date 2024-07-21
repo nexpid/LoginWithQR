@@ -6,15 +6,13 @@
 
 import { definePluginSettings } from "@api/Settings";
 import definePlugin, { OptionType } from "@utils/types";
+import { findByProps } from "@webpack";
 import { Button, Forms, i18n, Menu, TabBar } from "@webpack/common";
 import { ReactElement } from "react";
 
 import {
     cl,
-    menuItemFocused,
     QrCodeCameraIcon,
-    subMenuIcon,
-    tabBarItemContainer,
 } from "./ui";
 import openQrModal from "./ui/modals/QrModal";
 
@@ -119,6 +117,8 @@ export default definePlugin({
     ),
 
     get ScanQrMenuItem() {
+        const { menuItemFocused, subMenuIcon } = findByProps("menuItemFocused") as Record<string, string>;
+
         return (
             <Menu.MenuGroup>
                 <Menu.MenuItem
@@ -136,9 +136,7 @@ export default definePlugin({
 
     ScanQrTabBarComponent: () => (
         <TabBar.Item id="Scan QR Code" onClick={openQrModal}>
-            <div className={tabBarItemContainer}>
-                {i18n.Messages.USER_SETTINGS_SCAN_QR_CODE}
-            </div>
+            {i18n.Messages.USER_SETTINGS_SCAN_QR_CODE}
         </TabBar.Item>
     ),
 });
