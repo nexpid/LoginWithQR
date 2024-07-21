@@ -2,9 +2,9 @@
 
 Allows you to login by scanning a Discord login QR code on desktop!
 
-| ![Scan QR code button in the My Account tab](./previews/myaccount.png) | ![Gif showcasing authorization process](./previews/auth.gif) |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Scan QR code button in the My Account tab                              | Authorization using webcamera                                |
+| ![Scan QR button in the My Account tab](./previews/myaccount.png) | ![Scan QR menu item in the simplified user popout](./previews/menuitem.png) | ![Authorization using webcamera](./previews/auth.gif) |
+| ----------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Scan QR button in the My Account tab                              | Scan QR menu item in the simplified user popout                             | Authorization using webcamera                         |
 
 ## Installation
 
