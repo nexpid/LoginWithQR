@@ -44,3 +44,6 @@ export const { QrCodeCameraIcon } = findByPropsLazy("QrCodeCameraIcon") as {
 };
 
 export const cl = classNameFactory("qrlogin-");
+
+export const { tabBarItemContainer } = findByPropsLazy("tabBarItemContainer") as Record<string, string>;
+export const { menuItemFocused, subMenuIcon } = findByPropsLazy("menuItemFocused") as Record<string, string>;

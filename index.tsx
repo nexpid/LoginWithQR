@@ -6,10 +6,16 @@
 
 import { definePluginSettings } from "@api/Settings";
 import definePlugin, { OptionType } from "@utils/types";
-import { Button, Forms, i18n, Menu } from "@webpack/common";
+import { Button, Forms, i18n, Menu, TabBar } from "@webpack/common";
 import { ReactElement } from "react";
 
-import { cl, QrCodeCameraIcon } from "./ui";
+import {
+    cl,
+    menuItemFocused,
+    QrCodeCameraIcon,
+    subMenuIcon,
+    tabBarItemContainer,
+} from "./ui";
 import openQrModal from "./ui/modals/QrModal";
 
 export let jsQR: (
@@ -45,8 +51,7 @@ export default definePlugin({
                 if (!Vencord.Plugins.plugins.LoginWithQR.started)
                     return (
                         <Forms.FormText>
-                            Enable the plugin and restart your client to scan a
-                            login QR code
+                            Enable the plugin and restart your client to scan a login QR code
                         </Forms.FormText>
                     );
 
@@ -60,7 +65,18 @@ export default definePlugin({
     }),
 
     patches: [
-        // Insert the Scan QR button in the My Account tab
+        // Prevent paste event from firing when the QRModal is open
+        {
+            find: ".clipboardData&&(",
+            replacement: {
+                // Find the handleGlobalPaste & handlePaste functions and prevent
+                // them from firing when the modal is open. Does this have any
+                // side effects? Maybe
+                match: /handle(Global)?Paste:(\i)(}|,)/g,
+                replace: "handle$1Paste:(...args)=>!$self.qrModalOpen&&$2(...args)$3",
+            },
+        },
+        // Insert a Scan QR Code button in the My Account tab
         {
             find: "UserSettingsAccountProfileCard",
             replacement: {
@@ -70,25 +86,23 @@ export default definePlugin({
                 replace: ",$self.insertScanQrButton($1)",
             },
         },
-        // Prevent paste event from firing when the QRModal is open
-        {
-            find: ".clipboardData&&(",
-            replacement: {
-                // Find the handleGlobalPaste & handlePaste functions and prevent
-                // them from firing when the modal is open. Does this have any
-                // side effects? Maybe
-                match: /handle(Global)?Paste:(\i)(}|,)/g,
-                replace:
-                    "handle$1Paste:(...args)=>!$self.qrModalOpen&&$2(...args)$3",
-            },
-        },
-        // Insert a Scan QR MenuItem in the simplified user popout
+        // Insert a Scan QR Code MenuItem in the simplified user popout
         {
             find: "Messages.MULTI_ACCOUNT_MENU_LABEL",
             replacement: {
                 // Insert our own MenuItem before the Switch Account button
                 match: /children:\[(.{54}id:"switch-account")/,
                 replace: "children:[$self.ScanQrMenuItem,$1",
+            },
+        },
+        // Add a Scan QR entry to the settings TabBar
+        {
+            find: ".BILLING_SETTINGS,",
+            replacement: {
+                match: /((\i\.settings)\.forEach.+?(\i).push\(.+}\)}\))/,
+                replace: (_, original, settings, elements) =>
+                    `${original},${settings}?.[0]=="ACCOUNT"` +
+                    `&&${elements}.push({section:"CUSTOM",element:$self.ScanQrTabBarComponent})`,
             },
         },
     ],
@@ -113,10 +127,18 @@ export default definePlugin({
                     icon={QrCodeCameraIcon}
                     action={openQrModal}
                     showIconFirst
-                    focusedClassName={cl("menuitem-focused")}
-                    subMenuIconClassName={cl("submenu-icon")}
+                    focusedClassName={menuItemFocused}
+                    subMenuIconClassName={subMenuIcon}
                 />
             </Menu.MenuGroup>
         );
     },
+
+    ScanQrTabBarComponent: () => (
+        <TabBar.Item id="Scan QR Code" onClick={openQrModal}>
+            <div className={tabBarItemContainer}>
+                {i18n.Messages.USER_SETTINGS_SCAN_QR_CODE}
+            </div>
+        </TabBar.Item>
+    ),
 });
