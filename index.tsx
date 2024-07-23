@@ -10,24 +10,9 @@ import { findByProps } from "@webpack";
 import { Button, Forms, i18n, Menu, TabBar } from "@webpack/common";
 import { ReactElement } from "react";
 
-import {
-    cl,
-    QrCodeCameraIcon,
-} from "./ui";
+import { preload, unload } from "./images";
+import { cl, QrCodeCameraIcon } from "./ui";
 import openQrModal from "./ui/modals/QrModal";
-
-export let jsQR: (
-    img: Uint8ClampedArray,
-    width: number,
-    height: number
-) => {
-    binaryData: number[];
-    data: string;
-    chunks: any[];
-    version: number;
-    location: object;
-};
-import("./lib/jsQR.js").then(x => (jsQR = x.default));
 
 export default definePlugin({
     name: "LoginWithQR",
@@ -117,7 +102,9 @@ export default definePlugin({
     ),
 
     get ScanQrMenuItem() {
-        const { menuItemFocused, subMenuIcon } = findByProps("menuItemFocused") as Record<string, string>;
+        const { menuItemFocused, subMenuIcon } = findByProps(
+            "menuItemFocused"
+        ) as Record<string, string>;
 
         return (
             <Menu.MenuGroup>
@@ -139,4 +126,13 @@ export default definePlugin({
             {i18n.Messages.USER_SETTINGS_SCAN_QR_CODE}
         </TabBar.Item>
     ),
+
+    start() {
+        // Preload images
+        preload();
+    },
+
+    stop() {
+        unload?.();
+    },
 });
