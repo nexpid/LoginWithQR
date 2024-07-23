@@ -33,12 +33,6 @@ enum VerifyState {
     NotFound,
 }
 
-export enum AbortStatus {
-    Abort,
-    Fail,
-    Success,
-}
-
 function VerifyModal({
     token,
     onAbort,
