@@ -23,6 +23,7 @@ import {
     useState,
 } from "@webpack/common";
 
+import { images } from "../../images";
 import { cl } from "..";
 
 const { Controller } = findByPropsLazy("Controller");
@@ -120,7 +121,7 @@ function VerifyModal({
                     <>
                         <img
                             className={cl("device-image")}
-                            src="https://github.com/nexpid/Themelings/raw/data/icons/images/native/img_remote_auth_succeeded.png"
+                            src={images.deviceImage.success}
                             key="img-success"
                             draggable={false}
                         />
@@ -144,7 +145,7 @@ function VerifyModal({
                     <>
                         <img
                             className={cl("device-image")}
-                            src="https://github.com/nexpid/Themelings/raw/data/icons/images/native/img_remote_auth_not_found.png"
+                            src={images.deviceImage.notFound}
                             key="img-not_found"
                             draggable={false}
                         />
@@ -168,7 +169,7 @@ function VerifyModal({
                     <>
                         <img
                             className={cl("device-image")}
-                            src="https://github.com/nexpid/Themelings/raw/data/icons/images/native/img_remote_auth_loaded.png"
+                            src={images.deviceImage.loading}
                             key="img-loaded"
                             draggable={false}
                         />
@@ -181,8 +182,7 @@ function VerifyModal({
                             {i18n.Messages.QR_CODE_LOGIN_CONFIRM}
                         </Text>
                         <Text variant="text-md/semibold" color="text-danger">
-                            Never scan a login QR code from another user or
-                            application.
+                            Never scan a login QR code from another user or application.
                         </Text>
                         <Button
                             size={Button.Sizes.LARGE}
@@ -229,6 +229,11 @@ export default function openVerifyModal(
     closeMain: () => void
 ) {
     return openModal(props => (
-        <VerifyModal {...props} token={token} onAbort={onAbort} closeMain={closeMain} />
+        <VerifyModal
+            {...props}
+            token={token}
+            onAbort={onAbort}
+            closeMain={closeMain}
+        />
     ));
 }
