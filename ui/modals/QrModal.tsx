@@ -35,7 +35,7 @@ enum LoginStateType {
 
 const { getVideoDeviceId } = findByPropsLazy("getVideoDeviceId");
 
-const tokenRegex = /^https:\/\/discord\.com\/ra\/(.+)$/;
+const tokenRegex = /^https:\/\/discord\.com\/ra\/(\w+)$/;
 
 const verifyUrl = async (
     token: string,
@@ -92,9 +92,7 @@ const handleProcessImage = (
 
             const token = code?.data.match(tokenRegex)?.[1];
             if (token)
-                verifyUrl(token, exit, closeMain).catch(e =>
-                    exit(e?.message)
-                );
+                verifyUrl(token, exit, closeMain).catch(e => exit(e?.message));
             else exit(null);
             canvas.remove();
         });
@@ -120,16 +118,26 @@ function QrModal(props: ModalProps) {
             e.preventDefault();
             if (state !== LoginStateType.Idle || !e.clipboardData) return;
 
+            const exit = (err: string | null) => (
+                (error.current = err), setState(LoginStateType.Idle)
+            );
+
             for (const item of e.clipboardData.items) {
                 if (item.kind === "file" && item.type.startsWith("image/")) {
                     setState(LoginStateType.Loading);
-                    handleProcessImage(
-                        item.getAsFile()!,
-                        err => (
-                            (error.current = err), setState(LoginStateType.Idle)
-                        ),
-                        props.onClose
-                    );
+                    handleProcessImage(item.getAsFile()!, exit, props.onClose);
+                    break;
+                } else if (item.kind === "string" && item.type === "text/plain") {
+                    item.getAsString(text => {
+                        setState(LoginStateType.Loading);
+
+                        const token = text.match(tokenRegex)?.[1];
+                        if (token)
+                            verifyUrl(token, exit, props.onClose).catch(e =>
+                                exit(e?.message)
+                            );
+                        else exit(null);
+                    });
                     break;
                 }
             }
@@ -174,9 +182,7 @@ function QrModal(props: ModalProps) {
             const token = code?.data.match(tokenRegex)?.[1];
             if (token) {
                 setState(LoginStateType.Loading);
-                verifyUrl(token, exit, props.onClose).catch(e =>
-                    exit(e?.message)
-                );
+                verifyUrl(token, exit, props.onClose).catch(e => exit(e?.message));
             } else snapshotTimeout = setTimeout(snapshot, 1000) as any;
         };
 
@@ -187,7 +193,7 @@ function QrModal(props: ModalProps) {
                     deviceId: getVideoDeviceId(),
                     width: canvas.width,
                     height: canvas.height,
-                    frameRate: 5
+                    frameRate: 30,
                 },
             })
             .then(str => {
@@ -228,28 +234,20 @@ function QrModal(props: ModalProps) {
                 <div
                     className={cl(
                         "modal-filepaste",
-                        state === LoginStateType.Camera &&
-                        "modal-filepaste-disabled"
+                        state === LoginStateType.Camera && "modal-filepaste-disabled"
                     )}
                     onClick={() =>
-                        state === LoginStateType.Idle &&
-                        inputRef.current?.click()
+                        state === LoginStateType.Idle && inputRef.current?.click()
                     }
                     onDragEnter={e =>
-                        e.currentTarget.classList.add(
-                            cl("modal-filepaste-drop")
-                        )
+                        e.currentTarget.classList.add(cl("modal-filepaste-drop"))
                     }
                     onDragLeave={e =>
-                        e.currentTarget.classList.remove(
-                            cl("modal-filepaste-drop")
-                        )
+                        e.currentTarget.classList.remove(cl("modal-filepaste-drop"))
                     }
                     onDrop={e => {
                         e.preventDefault();
-                        e.currentTarget.classList.remove(
-                            cl("modal-filepaste-drop")
-                        );
+                        e.currentTarget.classList.remove(cl("modal-filepaste-drop"));
 
                         if (state !== LoginStateType.Idle) return;
 
@@ -259,8 +257,7 @@ function QrModal(props: ModalProps) {
                                 handleProcessImage(
                                     item,
                                     err => (
-                                        (error.current = err),
-                                        setState(LoginStateType.Idle)
+                                        (error.current = err), setState(LoginStateType.Idle)
                                     ),
                                     props.onClose
                                 );
@@ -277,25 +274,15 @@ function QrModal(props: ModalProps) {
                             {error.current}
                         </Text>
                     ) : state === LoginStateType.Camera ? (
-                        <Text
-                            color="header-primary"
-                            variant="heading-md/semibold"
-                        >
+                        <Text color="header-primary" variant="heading-md/semibold">
                             Scanning...
                         </Text>
                     ) : (
                         <>
-                            <Text
-                                color="header-primary"
-                                variant="heading-md/semibold"
-                            >
-                                Drag and drop an image here, or click to select
-                                an image
+                            <Text color="header-primary" variant="heading-md/semibold">
+                                Drag and drop an image here, or click to select an image
                             </Text>
-                            <Text
-                                color="text-muted"
-                                variant="heading-sm/medium"
-                            >
+                            <Text color="text-muted" variant="heading-sm/medium">
                                 Or paste an image from your clipboard!
                             </Text>
                         </>
@@ -305,8 +292,7 @@ function QrModal(props: ModalProps) {
                     type="file"
                     accept="image/*"
                     onChange={e => {
-                        if (!e.target.files || state !== LoginStateType.Idle)
-                            return;
+                        if (!e.target.files || state !== LoginStateType.Idle) return;
 
                         for (const item of e.target.files) {
                             if (item.type.startsWith("image/")) {
@@ -314,8 +300,7 @@ function QrModal(props: ModalProps) {
                                 handleProcessImage(
                                     item,
                                     err => (
-                                        (error.current = err),
-                                        setState(LoginStateType.Idle)
+                                        (error.current = err), setState(LoginStateType.Idle)
                                     ),
                                     props.onClose
                                 );
@@ -331,8 +316,7 @@ function QrModal(props: ModalProps) {
                     className={cl("modal-button")}
                     disabled={state === LoginStateType.Loading}
                     onClick={() => {
-                        if (state === LoginStateType.Idle)
-                            setState(LoginStateType.Camera);
+                        if (state === LoginStateType.Idle) setState(LoginStateType.Camera);
                         else if (state === LoginStateType.Camera)
                             setState(LoginStateType.Idle);
                     }}
