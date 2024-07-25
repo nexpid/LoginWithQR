@@ -168,7 +168,7 @@ function QrModal(props: ModalProps) {
                     size.width = (media.width / media.height) * 34;
                 }
 
-                let source: React.ReactElement;
+                let source: ReactElement;
                 if (media instanceof HTMLImageElement)
                     source = (
                         <img src={media.src} style={{ width: "100%", height: "100%" }} />
@@ -344,6 +344,8 @@ function QrModal(props: ModalProps) {
                 stream = str;
                 video.srcObject = str;
                 video.addEventListener("loadedmetadata", () => {
+                    if (stopped) return stop(str);
+
                     video.play();
                     modalProps.current.setPreview(video);
                     snapshot();
