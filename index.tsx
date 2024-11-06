@@ -5,8 +5,9 @@
  */
 
 import { definePluginSettings } from "@api/Settings";
+import { getIntlMessage } from "@utils/discord";
 import definePlugin, { OptionType } from "@utils/types";
-import { Button, Forms, i18n, Menu } from "@webpack/common";
+import { Button, Forms, Menu } from "@webpack/common";
 import { ReactElement } from "react";
 
 import { preload, unload } from "./images";
@@ -17,7 +18,6 @@ export default definePlugin({
     name: "LoginWithQR",
     description:
         "Allows you to login to another device by scanning a login QR code, just like on mobile!",
-    // replace with EquicordDevs.nexpid when merged to Equicord
     authors: [
         {
             name: "Nexpid",
@@ -39,7 +39,7 @@ export default definePlugin({
 
                 return (
                     <Button size={Button.Sizes.SMALL} onClick={openQrModal}>
-                        {i18n.Messages.USER_SETTINGS_SCAN_QR_CODE}
+                        {getIntlMessage("USER_SETTINGS_SCAN_QR_CODE")}
                     </Button>
                 );
             },
@@ -64,13 +64,13 @@ export default definePlugin({
             replacement: {
                 // Find the Edit User Profile button and insert our custom button.
                 // A bit jank, but whatever
-                match: /,(.{11}\.Button,.{58}\.USER_SETTINGS_EDIT_USER_PROFILE}\))/,
-                replace: ",$self.insertScanQrButton($1)",
-            },
+                match: /,(\(.{1,90}2p2aY2"]\)\}\))/,
+                replace: ",$self.insertScanQrButton($1)"
+            }
         },
         // Insert a Scan QR Code MenuItem in the Swith Accounts popout
         {
-            find: ".SWITCH_ACCOUNTS_MANAGE_ACCOUNTS,",
+            find: 'id:"manage-accounts"',
             replacement: {
                 match: /(id:"manage-accounts",.*?)}\)\)(,\i)/,
                 replace: "$1}),$self.ScanQrMenuItem)$2"
@@ -100,21 +100,21 @@ export default definePlugin({
     insertScanQrButton: (button: ReactElement) => (
         <div className={cl("settings-btns")}>
             <Button size={Button.Sizes.SMALL} onClick={openQrModal}>
-                {i18n.Messages.USER_SETTINGS_SCAN_QR_CODE}
+                {getIntlMessage("USER_SETTINGS_SCAN_QR_CODE")}
             </Button>
             {button}
         </div>
     ),
     get ScanQrMenuItem() {
-        return <Menu.MenuItem id="scan-qr" label={i18n.Messages.USER_SETTINGS_SCAN_QR_CODE} action={openQrModal} />;
+        return <Menu.MenuItem id="scan-qr" label={getIntlMessage("USER_SETTINGS_SCAN_QR_CODE")} action={openQrModal} />;
     },
     get ScanQrSettingsSheet() {
         return {
-            section: i18n.Messages.USER_SETTINGS_SCAN_QR_CODE,
+            section: getIntlMessage("USER_SETTINGS_SCAN_QR_CODE"),
             onClick: openQrModal,
-            searchableTitles: [i18n.Messages.USER_SETTINGS_SCAN_QR_CODE],
-            label: i18n.Messages.USER_SETTINGS_SCAN_QR_CODE,
-            ariaLabel: i18n.Messages.USER_SETTINGS_SCAN_QR_CODE
+            searchableTitles: [getIntlMessage("USER_SETTINGS_SCAN_QR_CODE")],
+            label: getIntlMessage("USER_SETTINGS_SCAN_QR_CODE"),
+            ariaLabel: getIntlMessage("USER_SETTINGS_SCAN_QR_CODE")
         };
     },
 
