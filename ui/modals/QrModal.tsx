@@ -26,7 +26,7 @@ import { MutableRefObject, ReactElement } from "react";
 
 import { images } from "../../images";
 import jsQR, { QRCode } from "../../lib/jsQR";
-import { cl, Spinner, SpinnerTypes } from "..";
+import { cl, QrCodeIcon, Spinner, SpinnerTypes } from "..";
 import openVerifyModal from "./VerifyModal";
 
 enum LoginStateType {
@@ -178,10 +178,16 @@ function QrModal(props: ModalProps) {
                         <video
                             controls={false}
                             style={{ width: "100%", height: "100%" }}
-                            ref={e =>
-                                e &&
-                                ((e.srcObject = media.srcObject), !media.paused && e.play())
-                            }
+                            ref={e => {
+                                if (e) {
+                                    e.srcObject = media.srcObject;
+                                    if (!media.paused) {
+                                        e.play().catch(error => {
+                                            console.error("Error playing the video:", error);
+                                        });
+                                    }
+                                }
+                            }}
                         />
                     );
 
@@ -443,6 +449,7 @@ function QrModal(props: ModalProps) {
                             {preview.source}
                             {preview.crosses?.map(({ x, y, rot, size }) => (
                                 <span
+                                    key={cl("preview-cross")}
                                     className={cl("preview-cross")}
                                     style={{
                                         left: `${x}%`,
@@ -473,6 +480,8 @@ function QrModal(props: ModalProps) {
                             <Text color="text-muted" variant="heading-sm/medium">
                                 Or paste an image from your clipboard!
                             </Text>
+                            <br />
+                            <QrCodeIcon />
                         </>
                     )}
                 </div>
